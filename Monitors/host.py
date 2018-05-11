@@ -152,6 +152,50 @@ class MonitorFileStat(Monitor):
         return (self.filename, self.minsize, self.maxage)
 
 
+class MonitorDirStat(Monitor):
+    """Make sure a directory exists, isn't too old and/or isn't too small."""
+
+    type = "dirstat"
+
+    def __init__(self, name, config_options):
+        Monitor.__init__(self, name, config_options)
+        self.maxage_seconds = Monitor.get_config_option(config_options, 'maxage_seconds', required_type='int', minimum=0)
+        self.path = Monitor.get_config_option(config_options, 'path', required=True)
+
+        assert os.path.isdir(self.path), '%s is not a valid directory' % self.path
+
+    def run_test(self):
+        if not os.path.isdir(self.path):
+            self.record_fail("Path doesnt exist: %s" % self.path)
+            return False
+
+        try:
+            newest_file = max(os.stat(os.path.join(self.path, f)).st_mtime for f in os.listdir(self.path))
+        except Exception as e:
+            self.record_fail("Unable to check path: %s" % e)
+            return False
+
+        if self.maxage_seconds:
+            now = time.time()
+            diff = now - newest_file
+            if diff > self.maxage_seconds:
+                self.record_fail("Age is %d, should be < %d seconds" % (diff, self.maxage_seconds))
+                return False
+
+        self.record_success()
+        return True
+
+    def describe(self):
+        """Explains what we do"""
+        desc = "Checking %s exists" % self.path
+        if self.maxage_seconds:
+            desc = desc + " and is not older than %d seconds" % self.maxage_seconds
+        return desc
+
+    def get_params(self):
+        return (self.path, self.maxage_seconds)
+
+
 class MonitorApcupsd(Monitor):
     """Monitor an APC UPS (with apcupsd) to make sure it's ONLINE.
 
