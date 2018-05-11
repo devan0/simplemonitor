@@ -172,7 +172,7 @@ class HTMLLogger(Logger):
         last_failure = monitor.last_failure
 
         try:
-            age = datetime.datetime.utcnow() - monitor.last_update
+            age = datetime.datetime.now() - monitor.last_update
             age = age.days * 3600 + age.seconds
             update = monitor.last_update
         except Exception:
