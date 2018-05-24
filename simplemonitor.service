@@ -1,0 +1,14 @@
+[Unit]
+Description=SimpleMonitor script
+After=network.target
+
+[Service]
+User=simplemonitor
+Group=nogroup
+WorkingDirectory=/home/simplemonitor/simplemonitor/
+ExecStart=/usr/bin/python3 monitor.py -q
+RestartSec=60
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
