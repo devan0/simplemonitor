@@ -265,11 +265,11 @@ class Monitor:
     def record_fail(self, message=""):
         """Update internal state to show that we had a failure."""
         self.error_count += 1
-        self.last_update = datetime.datetime.utcnow()
+        self.last_update = datetime.datetime.now()
         self.last_result = str(message)
         if self.virtual_fail_count() == 1:
-            self.failed_at = datetime.datetime.utcnow()
-            self.last_failure = datetime.datetime.utcnow()
+            self.failed_at = datetime.datetime.now()
+            self.last_failure = datetime.datetime.now()
             self.failures += 1
         self.success_count = 0
         self.tests_run += 1
@@ -280,7 +280,7 @@ class Monitor:
         if self.error_count > 0:
             self.last_error_count = self.error_count
         self.error_count = 0
-        self.last_update = datetime.datetime.utcnow()
+        self.last_update = datetime.datetime.now()
         self.last_result = ""
         self.success_count += 1
         self.tests_run += 1

@@ -130,8 +130,8 @@ class Alerter:
             default=False
         ):
             self.time_info = [
-                (datetime.datetime.utcnow() - datetime.timedelta(minutes=1)).time(),
-                (datetime.datetime.utcnow() + datetime.timedelta(minutes=1)).time()
+                (datetime.datetime.now() - datetime.timedelta(minutes=1)).time(),
+                (datetime.datetime.now() + datetime.timedelta(minutes=1)).time()
             ]
             print("debug: set times for alerter to", self.time_info)
 
@@ -195,9 +195,10 @@ class Alerter:
             if monitor.virtual_fail_count() == self.limit or (self.repeat and (monitor.virtual_fail_count() % self.limit == 0)):
                 # This is the first time or nth time we've failed
                 if out_of_hours:
+                    print("alerter %s out of hours, skipping" % self.name)
                     if monitor.name not in self.ooh_failures:
                         self.ooh_failures.append(monitor.name)
-                        return ""
+                    return ""
                 return "failure"
             return ""
         elif monitor.all_better_now() and monitor.last_virtual_fail_count() >= self.limit:
@@ -220,7 +221,7 @@ class Alerter:
 
     def get_downtime(self, monitor):
         try:
-            downtime = datetime.datetime.utcnow() - monitor.first_failure_time()
+            downtime = datetime.datetime.now() - monitor.first_failure_time()
             seconds = downtime.seconds
             if seconds > 3600:
                 hours = int(seconds / 3600)

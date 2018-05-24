@@ -125,6 +125,9 @@ def load_monitors(m, filename, quiet):
         elif type == "filestat":
             new_monitor = Monitors.host.MonitorFileStat(monitor, config_options)
 
+        elif type == "dirstat":
+            new_monitor = Monitors.host.MonitorDirStat(monitor, config_options)
+
         elif type == "compound":
             new_monitor = Monitors.compound.CompoundMonitor(monitor, config_options)
             new_monitor.set_mon_refs(m)

@@ -71,7 +71,7 @@ class Logger(object):
 
     def get_downtime(self, monitor):
         try:
-            downtime = datetime.datetime.utcnow() - monitor.first_failure_time()
+            downtime = datetime.datetime.now() - monitor.first_failure_time()
             seconds = downtime.seconds
             if seconds > 3600:
                 hours = seconds / 3600
